@@ -37,14 +37,6 @@ public class Core
             StockMax = 200
         }
     };
-    List<ProductoComprado> ProductosComprados = new List<ProductoComprado>()
-    {
-        new ProductoComprado()
-        {
-            IdProducto = 1,
-            
-        }
-    };
     List<Cliente> ListClientes = new List<Cliente>()
     {
         new Cliente()
@@ -86,13 +78,27 @@ public class Core
             TotalFactura = 900
         }
     };
-    public List<Producto> DataProducto(int id)
+    List<DetalleFactura> ListDetallesFacturas = new List<DetalleFactura>()
     {
-        var result = (from i in Inventario
-                     where i.Id == id
-                     select i).ToList();
-        return result;
+        new DetalleFactura()
+        {
+            Id = 1,
+            
+        }
     }
+    //var invoiceProducts =
+    //                    (from inv in invoicesList
+    //                    join invDet in invoiceDetailsList
+    //                    on inv.Id equals invDet.IdInv
+    //                    join pro in productList
+    //                    on invDet.IdPro equals pro.Id
+     //                   where inv.Id == idInvo
+    //                    select new InvoiceProductsDto
+    //                    {
+    //                        Id = pro.Id,
+    //                        Name = pro.Name
+     //                   }).ToList<InvoiceProductsDto>();
+
     public void ListarInventario()
     {
         var result = (from i in Inventario
