@@ -37,6 +37,30 @@ public class Core
             StockMax = 200
         }
     };
+    List<ProductoComprado> ProductosComprados = new List<ProductoComprado>()
+    {
+        new ProductoComprado()
+        {
+            IdProducto = 1,
+            
+        }
+    };
+    List<Cliente> ListClientes = new List<Cliente>()
+    {
+        new Cliente()
+        {
+            Id = 1,
+            Nombre = "Andres",
+            Email = "luisandresalvarezsilva@gmail.com",
+
+        },
+        new Cliente()
+        {
+            Id = 2,
+            Nombre = "Pedro",
+            Email = "pedro123@gmail.com"
+        }
+    };
 
     List<Factura> ListFacturas = new List<Factura>()
     {
@@ -62,7 +86,13 @@ public class Core
             TotalFactura = 900
         }
     };
-
+    public List<Producto> DataProducto(int id)
+    {
+        var result = (from i in Inventario
+                     where i.Id == id
+                     select i).ToList();
+        return result;
+    }
     public void ListarInventario()
     {
         var result = (from i in Inventario
