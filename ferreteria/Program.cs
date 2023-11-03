@@ -9,13 +9,16 @@ internal class Program
         Core ObjCore = new Core();
         do {
             Console.Clear();
+            Console.WriteLine("------------------------Menu---------------------------");
             Console.WriteLine("Ingrese la opcion a realizar: ");
             Console.WriteLine("1-Listar los productos del inventario");
             Console.WriteLine("2-Listar productos a punto de agotarse");
             Console.WriteLine("3-Listar productos que se deben comprar y cantidad a comprar");
             Console.WriteLine("4-Listar total de facturas de enero del 2023");
-            Console.WriteLine("5-Calcular valor total del inventario");
-            Console.WriteLine("6-Salir");
+            Console.WriteLine("5-Listar productos de una factura");
+            Console.WriteLine("6-Calcular valor total del inventario");
+            Console.WriteLine("7-Listar clientes");
+            Console.WriteLine("8-Salir");
             menu = Console.ReadLine();
             switch (menu)
             {
@@ -38,6 +41,9 @@ internal class Program
                     ObjCore.ValorTotalInventario(); 
                     break;
                 case "7":
+                    ObjCore.ListarClientes();
+                    break;
+                case "8":
                     Console.WriteLine("Adios...");
                     break;
                 default:
@@ -46,6 +52,6 @@ internal class Program
                     Console.ReadLine();
                     break;
             }
-        } while (menu != "7");
+        } while (menu != "8");
     }
 }
