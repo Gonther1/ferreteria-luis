@@ -7,6 +7,9 @@ namespace ferreteria.Clases;
 
 public class Core
 {
+    // Data
+
+    // Listado de productos - Inventario
     List<Producto> Inventario = new List<Producto>()
     {
         new Producto()
@@ -23,7 +26,7 @@ public class Core
             Id = 2,
             Nombre = "Destornillador",
             PrecioUnit = 5000,
-            Cantidad = 200,
+            Cantidad = 17,
             StockMin = 20,
             StockMax = 400
         },
@@ -37,6 +40,8 @@ public class Core
             StockMax = 200
         }
     };
+
+    // Listado de Clientes - ListClientes
     List<Cliente> ListClientes = new List<Cliente>()
     {
         new Cliente()
@@ -54,64 +59,85 @@ public class Core
         }
     };
 
+    // Listado de Facturas - Listado de facturas 
     List<Factura> ListFacturas = new List<Factura>()
     {
         new Factura()
-        { 
+        {
             Id = 1,
             Fecha = new DateOnly(2023, 1, 27),
             IdCliente = 1,
             TotalFactura = 4050
         },
         new Factura()
-        { 
+        {
             Id = 2,
             Fecha = new DateOnly(2023, 2, 10),
             IdCliente = 2,
             TotalFactura = 2650
         },
         new Factura()
-        { 
+        {
             Id = 3,
             Fecha = new DateOnly(2023, 2, 5),
             IdCliente = 3,
             TotalFactura = 900
         }
     };
+
+    // Listado Detalles facturas - ListDetallesFacturas
     List<DetalleFactura> ListDetallesFacturas = new List<DetalleFactura>()
     {
         new DetalleFactura()
         {
             Id = 1,
-            
+            NroFactura = 2,
+            IdProducto = 3,
+            Cantidad = 2,
+            Valor = 12000
+        },
+        new DetalleFactura()
+        {
+            Id = 2,
+            NroFactura = 2,
+            IdProducto = 2,
+            Cantidad = 3,
+            Valor = 15000
+        },
+        new DetalleFactura()
+        {
+            Id = 3,
+            NroFactura = 2,
+            IdProducto = 3,
+            Cantidad = 2,
+            Valor = 500
         }
-    }
-    //var invoiceProducts =
-    //                    (from inv in invoicesList
-    //                    join invDet in invoiceDetailsList
-    //                    on inv.Id equals invDet.IdInv
-    //                    join pro in productList
-    //                    on invDet.IdPro equals pro.Id
-     //                   where inv.Id == idInvo
-    //                    select new InvoiceProductsDto
-    //                    {
-    //                        Id = pro.Id,
-    //                        Name = pro.Name
-     //                   }).ToList<InvoiceProductsDto>();
+    };
 
+
+    // Primer busqueda Linq
     public void ListarInventario()
     {
-        var result = (from i in Inventario
-                     select i).ToList();
         Console.Clear();
-        Console.WriteLine("---Inventario---");
-        result.ForEach(x => Console.WriteLine($"\nId: {x.Id}\nNombre: {x.Nombre}\nPrecio por unidad: {x.PrecioUnit}\nCantidad: {x.Cantidad}\nStock Minimo: {x.StockMin}\nStock Maximo: {x.StockMax}"));
+        var result = (from i in Inventario
+                      select i).ToList();
+        /* Console.WriteLine("---Inventario---"); */
+        foreach (var item in result)
+        {
+            Console.WriteLine($"Id: {item.Id}");
+            Console.WriteLine($"Producto: {item.Nombre}");
+            Console.WriteLine($"Precio por unidad: {item.PrecioUnit}");
+            Console.WriteLine($"Cantidad: {item.Cantidad}");
+            Console.WriteLine($"StockMin: {item.StockMin}");
+            Console.WriteLine($"StockMax: {item.StockMax}");
+
+        }
         Console.ReadLine();
     }
     public List<Producto> ProductosPorAgotarse()
     {
+        Console.Clear(); 
         var result = Inventario.Where(product => product.Cantidad < product.StockMin).ToList();
-        Console.Clear();
         Console.WriteLine("---Productos por agotarse---");
         result.ForEach(x => Console.WriteLine($"\nEl producto {x.Nombre} esta por agotarse con {x.StockMin - x.Cantidad} productos menos que el Stock minimo({x.StockMin})."));
         Console.ReadLine();
@@ -121,18 +147,20 @@ public class Core
 
     public void ProductosPorComprarse()
     {
-        var result = (from i in Inventario
-                      where i.Cantidad<i.StockMax
-                      select i).ToList();
         Console.Clear();
+        var result = (from i in Inventario
+                      where i.Cantidad < i.StockMax
+                      select i).ToList();
         if (result.Count > 0)
         {
+            Console.Clear();
             Console.WriteLine("---Productos por comprar---");
             result.ForEach(x => Console.WriteLine($"Para el producto '{x.Nombre}' se deben comprar {x.StockMax - x.Cantidad} productos(o) más"));
             Console.ReadLine();
         }
-        else 
+        else
         {
+            Console.Clear();
             Console.WriteLine("Todos los productos tienen su tope máximo");
             Console.ReadLine();
         }
@@ -140,19 +168,21 @@ public class Core
 
     public void TotalFacMesEnero()
     {
+        Console.Clear();
         var result = (from i in ListFacturas
-                      where i.Fecha.Year==2023 && i.Fecha.Month==1
+                      where i.Fecha.Year == 2023 && i.Fecha.Month == 1
                       select i).ToList();
 
-        Console.Clear();
         if (result.Count > 0)
         {
+            Console.Clear();
             Console.WriteLine("---Facturas Enero 2023---");
-            result.ForEach(x => Console.WriteLine($"{x.TotalFactura}"));
+            result.ForEach(x => Console.WriteLine($"Id: {x.Id}\nFecha de la factura: {x.Fecha}\nValor Factura: $ {x.TotalFactura}"));
             Console.ReadLine();
         }
-        else 
+        else
         {
+            Console.Clear();
             Console.WriteLine("No existe ninguna factura de Enero del 2023");
             Console.ReadLine();
         }
@@ -160,43 +190,63 @@ public class Core
 
     public void ProductosVendidosUnaFactura()
     {
-/*         var result = (from i in ListFacturas
-                      where i.Fecha.Year==2023 && i.Fecha.Month==1
-                      select i).ToList();
-
+        int IdSearch;
+        string text;
         Console.Clear();
-        if (result.Count > 0)
+        Console.WriteLine("-------Productos de una factura-------");
+        Console.WriteLine("Ingrese el Id de la factura: ");
+        text=Console.ReadLine();
+        while (!int.TryParse(text, out IdSearch))
         {
-            Console.WriteLine("---Facturas Enero 2023---");
-            result.ForEach(x => Console.WriteLine($"{x.TotalFactura}"));
-            Console.ReadLine();
-        }
-        else 
-        {
-            Console.WriteLine("No existe ninguna factura de Enero del 2023");
-            Console.ReadLine();
-        } */
+            Console.Clear();
+            Console.WriteLine("-------Productos de una factura-------");
+            Console.WriteLine("Ingrese un id valido: ");
+            text=Console.ReadLine();
+        };
+        var result =
+            (from listFact in ListFacturas
+             join listDetails in ListDetallesFacturas
+             on listFact.Id equals listDetails.NroFactura
+             join inv in Inventario
+             on listDetails.IdProducto equals inv.Id
+             where listFact.Id == IdSearch
+             select new ProductoComprado
+             {
+                 IdProducto = inv.Id,
+                 Nombre = inv.Nombre
+             }).ToList<ProductoComprado>();
+        Console.Clear();
+        Console.WriteLine($"Productos de la factura con id: {IdSearch}");
+        result.ForEach(x => Console.WriteLine($"IdProducto: {x.IdProducto} - Nombre: {x.Nombre}"));
+        Console.ReadLine();
     }
 
     public void ValorTotalInventario()
     {
-/*         var result = (from i in ListFacturas
-                      where i.Fecha.Year==2023 && i.Fecha.Month==1
-                      select i).ToList();
-
         Console.Clear();
-        if (result.Count > 0)
+        double totalInventario = 0;
+        var result = (from i in Inventario
+                      select i).ToList();
+        Console.WriteLine("--------Total inventario------");
+        foreach (var item in result)
         {
-            Console.WriteLine("---Facturas Enero 2023---");
-            result.ForEach(x => Console.WriteLine($"{x.TotalFactura}"));
-            Console.ReadLine();
-        }
-        else 
-        {
-            Console.WriteLine("No existe ninguna factura de Enero del 2023");
-            Console.ReadLine();
-        } */
+            Console.WriteLine($"Producto: {item.Nombre}\nCantidad: {item.Cantidad}\nPrecio unidad: {item.PrecioUnit}\n\n");
+            totalInventario += item.Cantidad * item.PrecioUnit;
+        };
+        Console.WriteLine($"El total del inventario actual es de: {totalInventario}");
+        Console.ReadLine();
     }
 
-
+    public void ListarClientes()
+    {
+        Console.Clear();
+        var result = (from x in ListClientes
+                      select x).ToList();
+        Console.WriteLine("-----Clientes------");
+        result.ForEach(x => Console.WriteLine($"\nId: {x.Id}\nNombre: {x.Nombre}\nEmail:{x.Email}"));
+        Console.ReadLine();
+    }
 }
+
+
+
